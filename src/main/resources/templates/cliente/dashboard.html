@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Painel do Cliente')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 2.5rem 1.5rem;">
+    <!-- Cabeçalho do Dashboard -->
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <img th:if="${cliente.fotoPerfilUrl != null}" th:src="${cliente.fotoPerfilUrl}" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);" alt="Foto">
+            <div th:unless="${cliente.fotoPerfilUrl != null}" style="width: 76px; height: 76px; border-radius: 50%; background: #eff6ff; color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+                <span class="badge badge-oab" style="margin-bottom: 0.35rem;">Área do Cliente</span>
+                <h1 style="font-size: 1.65rem;" th:text="${cliente.nome}">Nome do Cliente</h1>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    CPF: <span th:text="${cliente.cpf}">000.000.000-00</span> &bull; <span th:text="${cliente.email}">cliente@email.com</span>
+                </p>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{/cliente/perfil}" class="btn btn-outline btn-sm">
+                <i class="fa-solid fa-camera"></i> Configurar Foto e Perfil
+            </a>
+            <a th:href="@{/advogados}" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-magnifying-glass"></i> Buscar Novo Advogado
+            </a>
+        </div>
+    </div>
+
+    <!-- Grid de Processos e Mensagens -->
+    <div style="display: grid; grid-template-columns: 1.6fr 1.2fr; gap: 2rem;">
+        <!-- Meus Processos / RPS -->
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.35rem;"><i class="fa-solid fa-file-contract"></i> Minhas Demandas & Processos (RPS)</h2>
+                <span class="badge badge-oab" th:text="${processos.size()} + ' ativos'">1</span>
+            </div>
+
+            <div th:if="${processos.empty}" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem 1.5rem; text-align: center;">
+                <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <h3>Nenhuma causa registrada</h3>
+                <p style="margin-bottom: 1.25rem;">Você ainda não possui contratações de serviços jurídicos formalizadas.</p>
+                <a th:href="@{/advogados}" class="btn btn-primary btn-sm">Encontrar Advogado</a>
+            </div>
+
+            <div th:unless="${processos.empty}" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div th:each="proc : ${processos}" class="card" style="border-left: 4px solid var(--secondary);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                        <div>
+                            <span class="badge badge-oab" style="font-size: 0.75rem;" th:text="${proc.numero}">RPS-001</span>
+                            <h3 style="font-size: 1.15rem; margin-top: 0.25rem;" th:text="${proc.descricaoServico}">Descrição do Serviço</h3>
+                        </div>
+                        <span class="badge badge-rating" style="color: #065f46; background: #ecfdf5; border-color: #a7f3d0;" th:text="${proc.status}">EM ANDAMENTO</span>
+                    </div>
+
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        <div><strong>Advogado Patrocinante:</strong> <span th:text="${proc.nomeAdvogado}">Dr. Advogado</span> (<span th:text="${proc.oab}">OAB</span>)</div>
+                        <div><strong>Formalizado via:</strong> <span th:text="${proc.nomeEmpresa}">Attorney App LTDA</span></div>
+                        <div><strong>Data:</strong> <span th:text="${#temporals.format(proc.dataCriacao, 'dd/MM/yyyy HH:mm')}">15/10/2026</span></div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a th:href="@{'/chat/' + ${proc.advogado.id}}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-comments"></i> Conversar com Advogado
+                        </a>
+                        <a th:href="@{'/advogados/' + ${proc.advogado.id}}" class="btn btn-outline btn-sm">
+                            <i class="fa-solid fa-star"></i> Avaliar Serviço (0 a 10)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversas e Contatos Recentes -->
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="font-size: 1.35rem;"><i class="fa-solid fa-comments"></i> Mensagens & Contatos</h2>
+            </div>
+
+            <div th:if="${mensagens.empty}" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem 1.5rem; text-align: center;">
+                <i class="fa-solid fa-inbox" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <p>Nenhuma mensagem enviada ainda. Ao contatar um advogado, suas conversas aparecerão aqui.</p>
+            </div>
+
+            <div th:unless="${mensagens.empty}" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div th:each="msg : ${mensagens}" class="card" style="padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                        <strong style="font-size: 0.95rem;" th:text="${msg.advogado.nome}">Dr. Advogado</strong>
+                        <small style="color: var(--text-muted); font-size: 0.75rem;" th:text="${#temporals.format(msg.dataEnvio, 'dd/MM HH:mm')}">Data</small>
+                    </div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--primary);" th:text="${msg.assunto}">Assunto</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" th:text="${msg.mensagem}">Mensagem...</p>
+                    <a th:href="@{'/chat/' + ${msg.advogado.id}}" class="btn btn-outline btn-sm" style="font-size: 0.8rem; align-self: flex-start;">
+                        Abrir Conversa <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

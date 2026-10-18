@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Glossário Jurídico Descomplicado')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 2.5rem 1.5rem;">
+    <!-- Topo Informativo -->
+    <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: #ffffff; padding: 2.5rem; border-radius: var(--radius-lg); margin-bottom: 2rem;">
+        <div style="max-width: 800px;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-size: 0.8rem; margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-graduation-cap" style="color: var(--accent);"></i> Democratização do Conhecimento
+            </div>
+            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 0.75rem;">Glossário Jurídico Descomplicado</h1>
+            <p style="color: #cbd5e1; font-size: 1.05rem;">
+                Entenda os termos utilizados por juízes, tribunais e advogados nos andamentos processuais e sentenças em linguagem simples e didática.
+            </p>
+
+            <!-- Barra de Busca do Glossário (RF007) -->
+            <form th:action="@{/glossario}" method="get" style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                <input type="text" name="busca" th:value="${busca}" class="form-control" style="background: #ffffff; color: var(--text-primary);" placeholder="Pesquisar termo ou conceito (ex: Acórdão, Agravo, Citação, Revelia...)" required>
+                <button type="submit" class="btn btn-accent">
+                    <i class="fa-solid fa-magnifying-glass"></i> Buscar
+                </button>
+                <a th:if="${busca != null or letraSelecionada != null}" th:href="@{/glossario}" class="btn btn-outline" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">
+                    Limpar
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Filtro Alfabético A-Z -->
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem; flex-wrap: wrap;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-right: 0.5rem;">ÍNDICE:</span>
+        <a th:each="letra : ${alfabeto}"
+           th:href="@{/glossario(letra=${letra})}"
+           th:text="${letra}"
+           th:class="'btn btn-sm ' + (${letra == letraSelecionada} ? 'btn-primary' : 'btn-outline')"
+           style="padding: 0.25rem 0.55rem; min-width: 32px; text-align: center; font-size: 0.85rem;">
+            A
+        </a>
+    </div>
+
+    <!-- Contador de Resultados -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <p>
+            <strong th:text="${totalTermos}">0</strong> termos encontrados
+            <span th:if="${letraSelecionada != null}">iniciados com a letra <strong th:text="${letraSelecionada}">A</strong></span>
+            <span th:if="${busca != null}">para o termo "<strong th:text="${busca}">termo</strong>"</span>
+        </p>
+    </div>
+
+    <!-- Lista de Termos -->
+    <div th:if="${termos == null or termos.empty}" style="text-align: center; padding: 4rem 1rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+        <i class="fa-solid fa-book-open" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+        <h3>Nenhum termo encontrado</h3>
+        <p>Tente buscar por outra palavra ou navegue pelo alfabeto acima.</p>
+        <a th:href="@{/glossario}" class="btn btn-primary" style="margin-top: 1rem;">Ver Todos os Termos</a>
+    </div>
+
+    <div th:unless="${termos == null or termos.empty}" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div th:each="termo : ${termos}" class="card" style="padding: 1.5rem; border-left: 4px solid var(--primary);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.65rem;">
+                <h3 style="font-size: 1.25rem; color: var(--primary);" th:text="${termo.termo}">Nome do Termo</h3>
+                <span class="badge badge-oab" style="font-size: 0.75rem;" th:text="${termo.categoria}">Jurídico</span>
+            </div>
+            <p style="font-size: 1rem; line-height: 1.6; color: var(--text-secondary);" th:text="${termo.significado}">
+                Significado completo e didático do termo...
+            </p>
+        </div>
+    </div>
+
+    <!-- Paginação (quando usando busca paginada) -->
+    <div th:if="${paginaTermos != null and paginaTermos.totalPages > 1}" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2.5rem;">
+        <a th:if="${paginaTermos.hasPrevious()}"
+           th:href="@{/glossario(pagina=${paginaTermos.number - 1}, busca=${busca})}"
+           class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-chevron-left"></i> Anterior
+        </a>
+
+        <span style="display: flex; align-items: center; padding: 0 1rem; font-size: 0.9rem; color: var(--text-muted);">
+            Página <strong style="color: var(--text-primary); margin: 0 0.3rem;" th:text="${paginaTermos.number + 1}">1</strong> de <span th:text="${paginaTermos.totalPages}" style="margin-left: 0.3rem;">10</span>
+        </span>
+
+        <a th:if="${paginaTermos.hasNext()}"
+           th:href="@{/glossario(pagina=${paginaTermos.number + 1}, busca=${busca})}"
+           class="btn btn-outline btn-sm">
+            Próxima <i class="fa-solid fa-chevron-right"></i>
+        </a>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

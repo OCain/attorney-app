@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastro de Cliente')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 3.5rem 1.5rem; max-width: 540px;">
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md);">
+        <div style="margin-bottom: 2rem;">
+            <a th:href="@{/cadastro}" style="font-size: 0.85rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-arrow-left"></i> Voltar à seleção de perfil
+            </a>
+            <h1 style="font-size: 1.75rem; margin-bottom: 0.35rem;">Cadastro de Cliente</h1>
+            <p style="font-size: 0.9rem;">Preencha seus dados para acessar a plataforma e buscar especialistas.</p>
+        </div>
+
+        <form th:action="@{/cadastro/cliente}" th:object="${cliente}" method="post">
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Nome Completo: *</label>
+                <input type="text" th:field="*{nome}" class="form-control" placeholder="Seu nome completo" required>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">CPF: *</label>
+                <input type="text" th:field="*{cpf}" class="form-control" placeholder="000.000.000-00" required>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">E-mail: *</label>
+                <input type="email" th:field="*{email}" class="form-control" placeholder="seuemail@exemplo.com" required>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Senha de Acesso: *</label>
+                <input type="password" th:field="*{senha}" class="form-control" placeholder="Mínimo 6 caracteres" required>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Endereço / Cidade / Estado:</label>
+                <input type="text" th:field="*{endereco}" class="form-control" placeholder="Ex: Av. Paulista, 1000 - São Paulo/SP">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem;">
+                <i class="fa-solid fa-user-check"></i> Concluir Cadastro de Cliente
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.85rem;">
+            Já tem conta? <a th:href="@{/login}" style="font-weight: 600;">Faça login</a>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

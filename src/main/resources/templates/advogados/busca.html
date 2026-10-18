@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Buscar Advogados')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 2.5rem 1.5rem;">
+    <!-- Barra de busca no topo -->
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        <h1 style="font-size: 1.85rem; margin-bottom: 0.5rem;">Buscar Advogados Especialistas</h1>
+        <p style="margin-bottom: 1.25rem;">Pesquise por especialidade, assunto do seu processo ou nome do profissional.</p>
+
+        <form th:action="@{/advogados}" method="get" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <div style="flex: 2; min-width: 250px;">
+                <input type="text" name="busca" th:value="${busca}" class="form-control" placeholder="Digite uma área (ex: Trabalhista, Civil, Família) ou assunto...">
+            </div>
+            <div style="flex: 1; min-width: 180px;">
+                <select name="especialidade" class="form-control">
+                    <option value="">Todas as Especialidades</option>
+                    <option th:each="esp : ${especialidades}" th:value="${esp}" th:text="${esp}" th:selected="${esp == especialidadeSelecionada}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-magnifying-glass"></i> Filtrar
+            </button>
+            <a th:href="@{/advogados}" class="btn btn-outline" title="Limpar Filtros">
+                <i class="fa-solid fa-rotate-left"></i>
+            </a>
+        </form>
+    </div>
+
+    <!-- Resultados -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <p><strong th:text="${totalEncontrados}">0</strong> advogados encontrados</p>
+        <a href="https://cna.oab.org.br/" target="_blank" class="badge badge-cna">
+            <i class="fa-solid fa-shield-halved"></i> Validar registro no CNA OAB
+        </a>
+    </div>
+
+    <div th:if="${advogados.empty}" style="text-align: center; padding: 4rem 1rem; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+        <i class="fa-solid fa-user-slash" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+        <h3>Nenhum advogado encontrado</h3>
+        <p>Tente buscar por termos mais genéricos como "Trabalho", "Civil", "Família" ou veja todos os cadastrados.</p>
+        <a th:href="@{/advogados}" class="btn btn-primary" style="margin-top: 1rem;">Ver Todos os Advogados</a>
+    </div>
+
+    <div class="cards-grid" th:unless="${advogados.empty}">
+        <div th:each="advogado : ${advogados}" class="card">
+            <div class="card-advogado-header">
+                <img th:if="${advogado.fotoPerfilUrl != null}" th:src="${advogado.fotoPerfilUrl}" class="avatar-img" alt="Foto Advogado">
+                <div th:unless="${advogado.fotoPerfilUrl != null}" style="width: 64px; height: 64px; border-radius: 50%; background: var(--bg-muted); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div class="card-advogado-info">
+                    <h3 th:text="${advogado.nome}">Dr. Advogado</h3>
+                    <span class="specialty-tag" th:text="${advogado.especialidade}">Especialidade</span>
+                    <div class="badge badge-oab" th:text="${advogado.oab}">OAB/SP 000.000</div>
+                </div>
+            </div>
+
+            <p style="font-size: 0.9rem; margin-bottom: 1rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+               th:text="${advogado.biografia != null ? advogado.biografia : 'Advogado atuante com foco em excelência e transparência.'}">
+                Biografia...
+            </p>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border-color); margin-bottom: 1rem;">
+                <div class="rating-display">
+                    <i class="fa-solid fa-star star-icon"></i>
+                    <span th:text="${advogado.notaMedia}">10.0</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;" th:text="'(' + ${advogado.totalAvaliacoes} + ' notas)'">(0)</span>
+                </div>
+                <span th:if="${advogado.endereco != null}" style="font-size: 0.8rem; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 140px;">
+                    <i class="fa-solid fa-location-dot"></i> <span th:text="${advogado.endereco}">São Paulo</span>
+                </span>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:href="@{'/advogados/' + ${advogado.id}}" class="btn btn-outline btn-sm" style="flex: 1;">
+                    <i class="fa-solid fa-id-card"></i> Perfil
+                </a>
+                <a th:href="@{'/chat/' + ${advogado.id}}" class="btn btn-primary btn-sm" style="flex: 1;">
+                    <i class="fa-solid fa-comments"></i> Conversar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/layout :: floatingChat}"></div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

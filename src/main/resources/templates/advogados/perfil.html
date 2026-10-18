@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${advogado.nome})}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 2.5rem 1.5rem;">
+    <!-- Breadcrumb -->
+    <div style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+        <a th:href="@{/}">Home</a> &rsaquo;
+        <a th:href="@{/advogados}">Advogados</a> &rsaquo;
+        <span th:text="${advogado.nome}" style="color: var(--text-primary); font-weight: 600;">Dr. Advogado</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Coluna Principal: Informações & Avaliações -->
+        <div>
+            <!-- Card de Cabeçalho do Perfil -->
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap;">
+                    <img th:if="${advogado.fotoPerfilUrl != null}" th:src="${advogado.fotoPerfilUrl}" style="width: 110px; height: 110px; border-radius: var(--radius-lg); object-fit: cover; border: 3px solid var(--bg-muted);" alt="Foto">
+                    <div th:unless="${advogado.fotoPerfilUrl != null}" style="width: 110px; height: 110px; border-radius: var(--radius-lg); background: var(--bg-muted); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                            <h1 style="font-size: 1.85rem;" th:text="${advogado.nome}">Dr. Advogado</h1>
+                            <div class="rating-display" style="font-size: 1.1rem;">
+                                <i class="fa-solid fa-star star-icon"></i>
+                                <span th:text="${advogado.notaMedia}">10.0</span>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);" th:text="'(' + ${advogado.totalAvaliacoes} + ' avaliações)'">(0)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin: 0.5rem 0 0.85rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                            <span class="specialty-tag" th:text="${advogado.especialidade}">Área do Direito</span>
+                            <span class="badge badge-oab" th:text="${advogado.oab}">OAB/SP 000.000</span>
+                            <a href="https://cna.oab.org.br/" target="_blank" class="badge badge-cna" title="Verificar autenticidade no Conselho Federal da OAB">
+                                <i class="fa-solid fa-shield-halved"></i> Checar no CNA OAB
+                            </a>
+                        </div>
+
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.3rem;">
+                            <span th:if="${advogado.endereco != null}"><i class="fa-solid fa-location-dot" style="width: 16px;"></i> <span th:text="${advogado.endereco}">Endereço do Escritório</span></span>
+                            <span th:if="${advogado.telefone != null}"><i class="fa-solid fa-phone" style="width: 16px;"></i> <span th:text="${advogado.telefone}">Telefone</span></span>
+                            <span><i class="fa-solid fa-envelope" style="width: 16px;"></i> <span th:text="${advogado.email}">email@adv.com</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biografia / Sobre -->
+                <div style="margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 0.75rem;">Apresentação Profissional</h3>
+                    <p style="white-space: pre-line; color: var(--text-secondary);" th:text="${advogado.biografia != null ? advogado.biografia : 'Profissional dedicado ao exercício da advocacia com ética e excelência.'}">
+                        Biografia e qualificações do advogado...
+                    </p>
+                </div>
+            </div>
+
+            <!-- Seção de Avaliações dos Clientes (0 a 10) -->
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div>
+                        <h2 style="font-size: 1.4rem;">Avaliações de Clientes</h2>
+                        <p style="font-size: 0.9rem;">Notas de 0 a 10 e impressões do serviço prestado.</p>
+                    </div>
+                    <div class="rating-display" style="font-size: 1.5rem;">
+                        <i class="fa-solid fa-star star-icon"></i>
+                        <span th:text="${advogado.notaMedia}">10.0</span>
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">/ 10</span>
+                    </div>
+                </div>
+
+                <!-- Lista de Avaliações -->
+                <div th:if="${avaliacoes.empty}" style="text-align: center; padding: 2rem 0; color: var(--text-muted);">
+                    <p>Este profissional ainda não recebeu avaliações na plataforma. Seja o primeiro a avaliar após o atendimento!</p>
+                </div>
+
+                <div th:unless="${avaliacoes.empty}" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    <div th:each="av : ${avaliacoes}" style="background-color: var(--bg-muted); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <strong th:text="${av.cliente.nome}">Nome do Cliente</strong>
+                            <div class="badge badge-rating">
+                                <i class="fa-solid fa-star"></i> Nota <span th:text="${av.nota}">10</span>/10
+                            </div>
+                        </div>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 0.5rem;" th:text="${av.comentario}">Comentário da avaliação...</p>
+                        <small style="color: var(--text-muted); font-size: 0.75rem;" th:text="${#temporals.format(av.dataAvaliacao, 'dd/MM/yyyy HH:mm')}">Data</small>
+                    </div>
+                </div>
+
+                <!-- Formulário de Avaliação (se logado como cliente) -->
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Deixe sua Avaliação para este Profissional</h3>
+
+                    <div th:if="${usuarioLogado == null or !usuarioLogado.isCliente()}">
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">
+                            Para avaliar o advogado com uma nota de 0 a 10 e relatar sua experiência, por favor
+                            <a th:href="@{'/login?redirect=/advogados/' + ${advogado.id}}">faça login como Cliente</a>.
+                        </p>
+                    </div>
+
+                    <form th:if="${usuarioLogado != null and usuarioLogado.isCliente()}" th:action="@{'/avaliar/' + ${advogado.id}}" method="post">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.9rem;">
+                                Sua Nota de 0 a 10:
+                            </label>
+                            <select name="nota" class="form-control" style="max-width: 140px;" required>
+                                <option value="10">10 - Excelente</option>
+                                <option value="9">9 - Ótimo</option>
+                                <option value="8">8 - Muito Bom</option>
+                                <option value="7">7 - Bom</option>
+                                <option value="6">6 - Regular</option>
+                                <option value="5">5 - Mediano</option>
+                                <option value="4">4 - Abaixo do esperado</option>
+                                <option value="3">3 - Ruim</option>
+                                <option value="2">2 - Muito Ruim</option>
+                                <option value="1">1 - Péssimo</option>
+                                <option value="0">0 - Inaceitável</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.9rem;">
+                                Suas impressões sobre o atendimento e clareza do serviço:
+                            </label>
+                            <textarea name="comentario" rows="3" class="form-control" placeholder="Descreva como foi o atendimento, comunicação e resolução do problema..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-paper-plane"></i> Enviar Avaliação
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna Lateral: Formulário de Contato e Chat (RF008) -->
+        <div>
+            <!-- Box de Contato Direto -->
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: var(--shadow-sm); position: sticky; top: 90px;">
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-handshake"></i> Contatar Profissional</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 1.25rem;">Envie uma proposta de causa para consultoria ou patrocínio.</p>
+
+                <!-- Botão de Chat Rápido -->
+                <a th:href="@{'/chat/' + ${advogado.id}}" class="btn btn-accent" style="width: 100%; margin-bottom: 1.25rem; justify-content: center;">
+                    <i class="fa-solid fa-comments"></i> Iniciar Chat em Tempo Real
+                </a>
+
+                <div style="text-align: center; position: relative; margin-bottom: 1.25rem;">
+                    <hr style="border: 0; border-top: 1px solid var(--border-color);">
+                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 0 0.75rem; font-size: 0.75rem; color: var(--text-muted);">ou envie um formulário</span>
+                </div>
+
+                <form th:action="@{/contato/enviar}" method="post">
+                    <input type="hidden" name="advogadoId" th:value="${advogado.id}">
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem;">Assunto / Tipo da Ação:</label>
+                        <input type="text" name="assunto" class="form-control" placeholder="Ex: Horas extras, Pensão alimentícia..." required>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem;">Descrição do seu caso:</label>
+                        <textarea name="mensagem" rows="4" class="form-control" placeholder="Explique brevemente a situação que necessita de defesa ou consultoria..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fa-solid fa-envelope"></i> Enviar Mensagem
+                    </button>
+                </form>
+
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-muted); text-align: center;">
+                    <i class="fa-solid fa-lock"></i> Seus dados estão protegidos de acordo com a LGPD e o sigilo profissional da advocacia.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

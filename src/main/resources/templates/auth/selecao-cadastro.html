@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Criar Conta')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<div class="container" style="padding: 4.5rem 1.5rem; max-width: 720px; text-align: center;">
+    <h1 style="font-size: 2.2rem; margin-bottom: 0.75rem;">Como você deseja usar o Attorney App?</h1>
+    <p style="margin-bottom: 3rem;">Escolha o seu perfil para prosseguir com o cadastro personalizado.</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem; text-align: left;">
+        <!-- Card Sou Cliente -->
+        <a th:href="@{/cadastro/cliente}" class="card" style="text-decoration: none; border: 2px solid var(--border-color); padding: 2rem;">
+            <div style="width: 56px; height: 56px; border-radius: var(--radius-md); background: #eff6ff; color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin-bottom: 1.25rem;">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Sou Cliente</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Preciso de assessoria jurídica, quero buscar advogados qualificados, tirar dúvidas no glossário e avaliar serviços.
+            </p>
+            <span class="btn btn-primary btn-sm" style="margin-top: auto; width: fit-content;">
+                Cadastrar como Cliente &rarr;
+            </span>
+        </a>
+
+        <!-- Card Sou Advogado -->
+        <a th:href="@{/cadastro/advogado}" class="card" style="text-decoration: none; border: 2px solid var(--border-color); padding: 2rem;">
+            <div style="width: 56px; height: 56px; border-radius: var(--radius-md); background: #fef3c7; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin-bottom: 1.25rem;">
+                <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">Sou Advogado(a)</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Possuo registro na OAB, quero divulgar minhas especialidades, receber causas de clientes e gerenciar atendimentos.
+            </p>
+            <span class="btn btn-accent btn-sm" style="margin-top: auto; width: fit-content;">
+                Cadastrar com OAB &rarr;
+            </span>
+        </a>
+    </div>
+
+    <div style="margin-top: 2.5rem; font-size: 0.9rem;">
+        Já possui conta? <a th:href="@{/login}" style="font-weight: 600;">Faça login aqui</a>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

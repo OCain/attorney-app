@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Chat - ' + ${advogado.nome})}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+
+<div class="container" style="padding: 2rem 1.5rem; max-width: 850px;">
+    <!-- Container Principal do Chat -->
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; display: flex; flex-direction: column; height: 75vh;">
+        
+        <!-- Header da Conversa -->
+        <div style="background-color: var(--primary); color: #ffffff; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <img th:if="${advogado.fotoPerfilUrl != null}" th:src="${advogado.fotoPerfilUrl}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent);" alt="Advogado">
+                <div th:unless="${advogado.fotoPerfilUrl != null}" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                    <i class="fa-solid fa-gavel"></i>
+                </div>
+                <div>
+                    <h3 style="color: #ffffff; font-size: 1.15rem; margin-bottom: 0.15rem;" th:text="${advogado.nome}">Dr. Advogado</h3>
+                    <div style="font-size: 0.8rem; color: #cbd5e1; display: flex; align-items: center; gap: 0.5rem;">
+                        <span th:text="${advogado.especialidade}">Área</span> &bull;
+                        <span th:text="${advogado.oab}">OAB</span> &bull;
+                        <span style="color: #4ade80; display: inline-flex; align-items: center; gap: 0.25rem;"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> Online agora</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:href="@{'/advogados/' + ${advogado.id}}" class="btn btn-outline btn-sm" style="color: #ffffff; border-color: rgba(255,255,255,0.3);" title="Ver Perfil Completo">
+                    <i class="fa-solid fa-user"></i> Perfil
+                </a>
+                <a href="https://cna.oab.org.br/" target="_blank" class="badge badge-cna" title="Validar Registro na OAB">
+                    <i class="fa-solid fa-shield-halved"></i> CNA
+                </a>
+            </div>
+        </div>
+
+        <!-- Área de Rolagem das Mensagens -->
+        <div id="chatMessages" style="flex: 1; padding: 1.5rem; overflow-y: auto; background-color: var(--bg-muted); display: flex; flex-direction: column; gap: 1rem;">
+            
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <span style="background: rgba(0,0,0,0.06); padding: 0.3rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-lock"></i> Conversa protegida por sigilo profissional e criptografia
+                </span>
+            </div>
+
+            <div th:if="${conversa.empty}" style="text-align: center; margin: auto; color: var(--text-muted);">
+                <i class="fa-solid fa-comments" style="font-size: 2.5rem; margin-bottom: 0.75rem; display: block;"></i>
+                <p>Nenhuma mensagem ainda. Inicie a conversa abaixo para tirar suas dúvidas jurídicas ou solicitar proposta.</p>
+            </div>
+
+            <!-- Balões de Mensagem -->
+            <div th:each="msg : ${conversa}"
+                 th:style="${msg.enviadoPor.name() == 'CLIENTE'} ? 'align-self: flex-end; max-width: 75%;' : 'align-self: flex-start; max-width: 75%;'">
+                
+                <div th:style="${msg.enviadoPor.name() == 'CLIENTE'} ?
+                             'background: var(--primary); color: #ffffff; padding: 0.85rem 1.15rem; border-radius: 16px 16px 2px 16px; box-shadow: var(--shadow-sm);' :
+                             'background: #ffffff; color: var(--text-primary); padding: 0.85rem 1.15rem; border-radius: 16px 16px 16px 2px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);'">
+                    
+                    <div style="display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 0.35rem; font-size: 0.75rem;"
+                         th:style="${msg.enviadoPor.name() == 'CLIENTE'} ? 'color: #cbd5e1;' : 'color: var(--text-muted);'">
+                        <strong th:text="${msg.enviadoPor.name() == 'CLIENTE' ? msg.cliente.nome : msg.advogado.nome}">Remetente</strong>
+                        <span th:text="${#temporals.format(msg.dataEnvio, 'HH:mm')}">14:30</span>
+                    </div>
+
+                    <p style="font-size: 0.95rem; line-height: 1.45; word-break: break-word;" th:text="${msg.mensagem}">
+                        Conteúdo da mensagem enviada...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de Envio de Nova Mensagem -->
+        <div style="background-color: var(--bg-card); border-top: 1px solid var(--border-color); padding: 1rem 1.5rem;">
+            <form th:action="@{/chat/enviar}" method="post" style="display: flex; gap: 0.75rem;">
+                <input type="hidden" name="advogadoId" th:value="${advogado.id}">
+                <input th:if="${cliente != null}" type="hidden" name="clienteId" th:value="${cliente.id}">
+
+                <input type="text" name="mensagem" id="inputMensagem" class="form-control" placeholder="Digite sua mensagem ou dúvida para o advogado..." required autocomplete="off" autofocus>
+                
+                <button type="submit" class="btn btn-primary" style="padding: 0 1.5rem;">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Rola para a mensagem mais recente ao carregar
+    const chatContainer = document.getElementById('chatMessages');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+</script>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

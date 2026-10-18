@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Editar Perfil Profissional')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 3rem 1.5rem; max-width: 650px;">
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm);">
+        <div style="margin-bottom: 2rem;">
+            <a th:href="@{/advogado/dashboard}" style="font-size: 0.85rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+            </a>
+            <h1 style="font-size: 1.75rem; margin-bottom: 0.35rem;">Editar Perfil Profissional</h1>
+            <p style="font-size: 0.9rem;">Mantenha suas informações e qualificações atualizadas para atrair mais clientes.</p>
+        </div>
+
+        <form th:action="@{/advogado/perfil}" method="post">
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Nome Completo:</label>
+                <input type="text" name="nome" th:value="${advogado.nome}" class="form-control" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Inscrição OAB:</label>
+                    <input type="text" th:value="${advogado.oab}" class="form-control" disabled style="background-color: var(--bg-muted);">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Especialidade Principal:</label>
+                    <input type="text" name="especialidade" th:value="${advogado.especialidade}" class="form-control" required>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">URL da Foto de Perfil:</label>
+                <input type="url" name="fotoPerfilUrl" th:value="${advogado.fotoPerfilUrl}" class="form-control" placeholder="https://exemplo.com/sua-foto.jpg">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Telefone / WhatsApp:</label>
+                    <input type="text" name="telefone" th:value="${advogado.telefone}" class="form-control">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">E-mail de Contato:</label>
+                    <input type="email" th:value="${advogado.email}" class="form-control" disabled style="background-color: var(--bg-muted);">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Endereço Profissional / Escritório:</label>
+                <input type="text" name="endereco" th:value="${advogado.endereco}" class="form-control" placeholder="Rua, número, cidade/UF">
+            </div>
+
+            <div style="margin-bottom: 1.75rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Biografia & Qualificações Profissionais:</label>
+                <textarea name="biografia" rows="5" class="form-control" th:text="${advogado.biografia}" placeholder="Descreva sua formação, anos de experiência, pós-graduações e áreas de destaque..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar Perfil
+            </button>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

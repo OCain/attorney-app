@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Configurar Perfil')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 3rem 1.5rem; max-width: 600px;">
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-sm);">
+        <div style="margin-bottom: 2rem;">
+            <a th:href="@{/cliente/dashboard}" style="font-size: 0.85rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem; margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-arrow-left"></i> Voltar ao Painel
+            </a>
+            <h1 style="font-size: 1.75rem; margin-bottom: 0.35rem;">Configurar Imagem e Perfil</h1>
+            <p style="font-size: 0.9rem;">Personalize sua foto de identificação e atualize seus dados.</p>
+        </div>
+
+        <form th:action="@{/cliente/perfil}" method="post" enctype="multipart/form-data">
+            <!-- Foto Atual / Preview -->
+            <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.75rem; padding: 1.25rem; background: var(--bg-muted); border-radius: var(--radius-md);">
+                <img th:if="${cliente.fotoPerfilUrl != null}" th:src="${cliente.fotoPerfilUrl}" style="width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff;" alt="Foto Atual">
+                <div th:unless="${cliente.fotoPerfilUrl != null}" style="width: 84px; height: 84px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 0.25rem;">Foto de Perfil Atual</h4>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Sua foto será exibida para os advogados durante contatos e contratações.</span>
+                </div>
+            </div>
+
+            <!-- Upload de Arquivo (RF005) -->
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">
+                    <i class="fa-solid fa-upload"></i> Enviar nova imagem do seu computador:
+                </label>
+                <input type="file" name="fotoFile" accept="image/*" class="form-control" style="padding: 0.5rem;">
+                <small style="color: var(--text-muted); font-size: 0.75rem;">Formatos aceitos: JPG, PNG, WEBP (máx. 5MB)</small>
+            </div>
+
+            <!-- Alternativa URL da Web -->
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">
+                    <i class="fa-solid fa-link"></i> Ou informe uma URL direta de imagem:
+                </label>
+                <input type="url" name="fotoUrlWeb" th:value="${cliente.fotoPerfilUrl}" class="form-control" placeholder="https://exemplo.com/sua-foto.jpg">
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Nome Completo:</label>
+                <input type="text" name="nome" th:value="${cliente.nome}" class="form-control" required>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">CPF (Não editável):</label>
+                <input type="text" th:value="${cliente.cpf}" class="form-control" disabled style="background-color: var(--bg-muted);">
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">E-mail (Não editável):</label>
+                <input type="email" th:value="${cliente.email}" class="form-control" disabled style="background-color: var(--bg-muted);">
+            </div>
+
+            <div style="margin-bottom: 1.75rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">Endereço Residencial:</label>
+                <input type="text" name="endereco" th:value="${cliente.endereco}" class="form-control" placeholder="Endereço, cidade, UF">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+            </button>
+        </form>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

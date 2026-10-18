@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Painel do Advogado')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 2.5rem 1.5rem;">
+    <!-- Cabeçalho do Advogado -->
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <img th:if="${advogado.fotoPerfilUrl != null}" th:src="${advogado.fotoPerfilUrl}" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);" alt="Foto">
+            <div th:unless="${advogado.fotoPerfilUrl != null}" style="width: 76px; height: 76px; border-radius: 50%; background: #fef3c7; color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
+                    <span class="badge badge-oab" th:text="${advogado.oab}">OAB/SP 000.000</span>
+                    <span class="specialty-tag" th:text="${advogado.especialidade}">Especialidade</span>
+                </div>
+                <h1 style="font-size: 1.65rem;" th:text="${advogado.nome}">Dr. Advogado</h1>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-envelope"></i> <span th:text="${advogado.email}">adv@email.com</span> &bull;
+                    <i class="fa-solid fa-star" style="color: var(--accent);"></i> Nota Média: <strong th:text="${advogado.notaMedia}">10.0</strong> (<span th:text="${advogado.totalAvaliacoes}">0</span> avaliações)
+                </p>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+            <a th:href="@{'/advogados/' + ${advogado.id}}" class="btn btn-outline btn-sm">
+                <i class="fa-solid fa-eye"></i> Ver Meu Perfil Público
+            </a>
+            <a th:href="@{/advogado/perfil}" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-pen-to-square"></i> Editar Dados & Bio
+            </a>
+        </div>
+    </div>
+
+    <!-- Cards de Métricas Rápidas -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Processos / RPS</span>
+            <strong style="font-size: 1.8rem; color: var(--primary); display: block; margin: 0.25rem 0;" th:text="${processos.size()}">0</strong>
+            <span style="font-size: 0.75rem; color: var(--success);"><i class="fa-solid fa-circle-check"></i> Em andamento</span>
+        </div>
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Contatos & Mensagens</span>
+            <strong style="font-size: 1.8rem; color: var(--secondary); display: block; margin: 0.25rem 0;" th:text="${mensagens.size()}">0</strong>
+            <span style="font-size: 0.75rem; color: var(--text-secondary);"><i class="fa-solid fa-inbox"></i> Clientes conectados</span>
+        </div>
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Nota Média</span>
+            <strong style="font-size: 1.8rem; color: var(--accent); display: block; margin: 0.25rem 0;" th:text="${advogado.notaMedia}">10.0</strong>
+            <span style="font-size: 0.75rem; color: var(--text-secondary);"><i class="fa-solid fa-star"></i> Escala de 0 a 10</span>
+        </div>
+        <div class="card" style="padding: 1.25rem; text-align: center;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Cadastro OAB</span>
+            <a href="https://cna.oab.org.br/" target="_blank" class="badge badge-cna" style="display: inline-block; margin-top: 0.6rem;">
+                <i class="fa-solid fa-shield-halved"></i> Checar no CNA
+            </a>
+            <span style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">Status regular</span>
+        </div>
+    </div>
+
+    <!-- Seções de Conteúdo -->
+    <div style="display: grid; grid-template-columns: 1.4fr 1.6fr; gap: 2rem;">
+        <!-- Mensagens e Demandas de Clientes -->
+        <div>
+            <h2 style="font-size: 1.35rem; margin-bottom: 1rem;"><i class="fa-solid fa-envelope-open-text"></i> Demandas & Propostas Recebidas</h2>
+
+            <div th:if="${mensagens.empty}" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem 1.5rem; text-align: center;">
+                <i class="fa-solid fa-inbox" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <p>Nenhuma mensagem recebida no momento.</p>
+            </div>
+
+            <div th:unless="${mensagens.empty}" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div th:each="msg : ${mensagens}" class="card" style="padding: 1.25rem; border-left: 4px solid var(--accent);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+                        <div>
+                            <strong th:text="${msg.cliente.nome}">Nome do Cliente</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">CPF: <span th:text="${msg.cliente.cpf}">000</span></div>
+                        </div>
+                        <small style="color: var(--text-muted); font-size: 0.75rem;" th:text="${#temporals.format(msg.dataEnvio, 'dd/MM/yyyy HH:mm')}">Data</small>
+                    </div>
+                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--primary); margin-bottom: 0.25rem;" th:text="${msg.assunto}">Assunto</div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;" th:text="${msg.mensagem}">Mensagem do cliente...</p>
+                    <a th:href="@{'/chat/' + ${advogado.id}}" class="btn btn-primary btn-sm" style="align-self: flex-start;">
+                        <i class="fa-solid fa-reply"></i> Responder no Chat
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relações de Prestação de Serviços (RPS) & Avaliações -->
+        <div>
+            <h2 style="font-size: 1.35rem; margin-bottom: 1rem;"><i class="fa-solid fa-file-signature"></i> Relações de Prestação de Serviços (RPS)</h2>
+
+            <div th:if="${processos.empty}" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem 1.5rem; text-align: center; margin-bottom: 2rem;">
+                <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <p>Nenhuma relação contratual registrada ainda.</p>
+            </div>
+
+            <div th:unless="${processos.empty}" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                <div th:each="proc : ${processos}" class="card" style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span class="badge badge-oab" th:text="${proc.numero}">RPS-123</span>
+                        <span class="badge badge-rating" style="background: #ecfdf5; color: #065f46; border-color: #a7f3d0;" th:text="${proc.status}">EM ANDAMENTO</span>
+                    </div>
+                    <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;" th:text="${proc.descricaoServico}">Serviço Jurídico</h3>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                        <div><strong>Cliente:</strong> <span th:text="${proc.nomeCliente}">Nome Cliente</span> (CPF: <span th:text="${proc.cpf}">000</span>)</div>
+                        <div><strong>Contrato Plataforma:</strong> <span th:text="${proc.nomeEmpresa}">Attorney App LTDA</span></div>
+                        <div><strong>Data:</strong> <span th:text="${#temporals.format(proc.dataCriacao, 'dd/MM/yyyy HH:mm')}">Data</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Últimas Avaliações Recebidas -->
+            <h2 style="font-size: 1.35rem; margin-bottom: 1rem;"><i class="fa-solid fa-star"></i> Avaliações dos Clientes</h2>
+            <div th:if="${avaliacoes.empty}" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem 1.5rem; text-align: center;">
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Nenhuma avaliação registrada até o momento.</p>
+            </div>
+            <div th:unless="${avaliacoes.empty}" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div th:each="av : ${avaliacoes}" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <strong style="font-size: 0.9rem;" th:text="${av.cliente.nome}">Nome</strong>
+                        <span class="badge badge-rating">Nota <span th:text="${av.nota}">10</span>/10</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);" th:text="${av.comentario}">Comentário...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

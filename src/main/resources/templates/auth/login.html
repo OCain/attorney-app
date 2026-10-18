@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Entrar na Conta')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container" style="padding: 4rem 1.5rem; max-width: 480px;">
+    <div style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-md);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="logo-icon" style="margin: 0 auto 1rem; width: 48px; height: 48px; font-size: 1.5rem; border-radius: var(--radius-md); background: var(--primary); color: var(--accent); display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h1 style="font-size: 1.75rem;">Acesse sua Conta</h1>
+            <p style="font-size: 0.9rem;">Área unificada para Clientes e Advogados</p>
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <input type="hidden" name="redirect" th:value="${redirect}">
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">E-mail Cadastrado:</label>
+                <input type="email" name="email" class="form-control" placeholder="seuemail@exemplo.com" required autofocus>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600;">Senha:</label>
+                    <a href="#recuperar" style="font-size: 0.8rem; color: var(--secondary);">Esqueceu a senha?</a>
+                </div>
+                <input type="password" name="senha" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem;">
+                <i class="fa-solid fa-right-to-bracket"></i> Entrar
+            </button>
+        </form>
+
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.9rem;">
+            Ainda não possui conta? <a th:href="@{/cadastro}" style="font-weight: 600;">Cadastre-se gratuitamente</a>
+        </div>
+
+        <!-- Dica de Teste Rápido para Avaliação do Sistema -->
+        <div style="margin-top: 1.5rem; background: var(--bg-muted); padding: 0.85rem; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
+            <strong>Contas de Demonstração:</strong><br>
+            &bull; Cliente: <code>cliente@attorney.com</code> / Senha: <code>123456</code><br>
+            &bull; Advogado: <code>advogado@attorney.com</code> / Senha: <code>123456</code>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

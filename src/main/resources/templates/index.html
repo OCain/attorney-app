@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body>
+
+<header th:replace="~{fragments/layout :: navbar}"></header>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.85rem; margin-bottom: 1.25rem;">
+                <i class="fa-solid fa-sparkles" style="color: var(--accent);"></i>
+                <span>Direito descomplicado & Conexão direta</span>
+            </div>
+
+            <h1>Encontre o <span>advogado ideal</span> e compreenda seus direitos com clareza.</h1>
+            <p>
+                Conectamos clientes aos melhores especialistas jurídicos, com avaliações transparentes e um glossário completo para você nunca mais se perder nos termos jurídicos.
+            </p>
+
+            <!-- Box de Busca Principal (RF004) -->
+            <div class="hero-search-box">
+                <form th:action="@{/advogados}" method="get" class="search-form">
+                    <div class="search-input-wrap">
+                        <input type="text" name="busca" placeholder="Ex: Trabalhista, Divórcio, Consumidor, Contratos..." required>
+                    </div>
+                    <button type="submit" class="btn btn-accent">
+                        <i class="fa-solid fa-magnifying-glass"></i> Buscar Advogados
+                    </button>
+                </form>
+
+                <div class="quick-chips">
+                    <span>Especialidades frequentes:</span>
+                    <a th:href="@{/advogados(especialidade='Direito do Trabalho')}" class="chip">Trabalhista</a>
+                    <a th:href="@{/advogados(especialidade='Direito Civil')}" class="chip">Cível</a>
+                    <a th:href="@{/advogados(especialidade='Direito de Família')}" class="chip">Família</a>
+                    <a th:href="@{/advogados(especialidade='Direito do Consumidor')}" class="chip">Consumidor</a>
+                    <a th:href="@{/advogados(especialidade='Direito Penal')}" class="chip">Penal</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card de Destaque / Acesso Rápido -->
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <!-- Card Glossário Jurídico (RF007) -->
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-lg); padding: 1.5rem; backdrop-filter: blur(8px);">
+                <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+                    <div style="width: 44px; height: 44px; background: rgba(217, 119, 6, 0.2); border: 1px solid var(--accent); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.25rem;">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h3 style="color: #ffffff; font-size: 1.15rem;">Glossário Jurídico</h3>
+                        <span style="color: #94a3b8; font-size: 0.85rem;">Mais de 500 termos descomplicados</span>
+                    </div>
+                </div>
+                <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem;">
+                    Não entendeu um termo do seu processo ou sentença judicial? Consulte o significado em linguagem clara e acessível.
+                </p>
+                <a th:href="@{/glossario}" class="btn btn-outline btn-sm" style="color: #ffffff; border-color: rgba(255,255,255,0.3); width: 100%;">
+                    <i class="fa-solid fa-arrow-right"></i> Acessar Glossário
+                </a>
+            </div>
+
+            <!-- Card Validação CNA OAB (RF006) -->
+            <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-lg); padding: 1.5rem; backdrop-filter: blur(8px);">
+                <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+                    <div style="width: 44px; height: 44px; background: rgba(37, 99, 235, 0.2); border: 1px solid var(--secondary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: #60a5fa; font-size: 1.25rem;">
+                        <i class="fa-solid fa-shield-check"></i>
+                    </div>
+                    <div>
+                        <h3 style="color: #ffffff; font-size: 1.15rem;">Verificação Oficial CNA</h3>
+                        <span style="color: #94a3b8; font-size: 0.85rem;">Cadastro Nacional de Advogados</span>
+                    </div>
+                </div>
+                <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem;">
+                    Consulte e confirme a regularidade da inscrição de qualquer advogado diretamente na base oficial da Ordem dos Advogados do Brasil.
+                </p>
+                <a href="https://cna.oab.org.br/" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="color: #ffffff; border-color: rgba(255,255,255,0.3); width: 100%;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Portal CNA OAB
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção Advogados em Destaque -->
+<section style="padding: 4.5rem 0;">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+            <div>
+                <span class="badge badge-oab" style="margin-bottom: 0.5rem;">Profissionais Verificados</span>
+                <h2>Advogados em Destaque</h2>
+                <p>Especialistas avaliados com notas de 0 a 10 por clientes reais na plataforma.</p>
+            </div>
+            <a th:href="@{/advogados}" class="btn btn-outline btn-sm">
+                Ver todos os especialistas <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="cards-grid">
+            <div th:each="advogado : ${advogadosDestaque}" class="card">
+                <div class="card-advogado-header">
+                    <img th:if="${advogado.fotoPerfilUrl != null}" th:src="${advogado.fotoPerfilUrl}" class="avatar-img" alt="Foto Advogado">
+                    <div th:unless="${advogado.fotoPerfilUrl != null}" style="width: 64px; height: 64px; border-radius: 50%; background: var(--bg-muted); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div class="card-advogado-info">
+                        <h3 th:text="${advogado.nome}">Dr. Advogado</h3>
+                        <span class="specialty-tag" th:text="${advogado.especialidade}">Área do Direito</span>
+                        <div class="badge badge-oab" style="display: block; width: fit-content;" th:text="${advogado.oab}">OAB/SP 000.000</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 0.9rem; margin-bottom: 1.25rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;"
+                   th:text="${advogado.biografia != null ? advogado.biografia : 'Profissional atuante comprometido com a defesa intransigente dos direitos e consultoria humanizada.'}">
+                    Biografia do profissional...
+                </p>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+                    <div class="rating-display">
+                        <i class="fa-solid fa-star star-icon"></i>
+                        <span th:text="${advogado.notaMedia}">10.0</span>
+                        <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: normal;" th:text="'(' + ${advogado.totalAvaliacoes} + ' avaliações)'">(2)</span>
+                    </div>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-location-dot"></i> Atende Online e Presencial</span>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <a th:href="@{'/advogados/' + ${advogado.id}}" class="btn btn-outline btn-sm" style="flex: 1;">
+                        <i class="fa-solid fa-id-card"></i> Ver Perfil
+                    </a>
+                    <a th:href="@{'/chat/' + ${advogado.id}}" class="btn btn-primary btn-sm" style="flex: 1;">
+                        <i class="fa-solid fa-message"></i> Contatar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Banner Informativo Modelo Humanizado -->
+<section style="background-color: var(--bg-muted); padding: 3.5rem 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="container" style="text-align: center; max-width: 800px;">
+        <h2 style="margin-bottom: 1rem;">Compromisso com a Legalidade e Transparência</h2>
+        <p style="margin-bottom: 2rem;">
+            O Attorney App garante autonomia funcional ao advogado e oferece ao cliente a liberdade de manifestar a qualidade do serviço através de notas de 0 a 10 e relatos, impulsionando a excelência no atendimento.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a th:href="@{/cadastro/cliente}" class="btn btn-primary">
+                <i class="fa-solid fa-user"></i> Sou Cliente (Buscar Ajuda)
+            </a>
+            <a th:href="@{/cadastro/advogado}" class="btn btn-outline">
+                <i class="fa-solid fa-scale-balanced"></i> Sou Advogado (Cadastrar OAB)
+            </a>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/layout :: floatingChat}"></div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>

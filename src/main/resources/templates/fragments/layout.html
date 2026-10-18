@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title != null ? title + ' - Attorney App' : 'Attorney App - Conectando Clientes e Advogados'}">Attorney App</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<!-- Navbar Comum -->
+<header th:fragment="navbar" class="navbar">
+    <div class="container nav-container">
+        <a th:href="@{/}" class="brand-logo">
+            <div class="logo-icon">
+                <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <span>Attorney<span style="color: var(--accent);">App</span></span>
+        </a>
+
+        <ul class="nav-links">
+            <li><a th:href="@{/}"><i class="fa-solid fa-house"></i> Início</a></li>
+            <li><a th:href="@{/advogados}"><i class="fa-solid fa-user-tie"></i> Buscar Advogados</a></li>
+            <li><a th:href="@{/glossario}"><i class="fa-solid fa-book-bookmark"></i> Glossário Jurídico</a></li>
+            <li>
+                <a href="https://cna.oab.org.br/" target="_blank" rel="noopener noreferrer" class="badge badge-cna" title="Verificar validade de registro no Cadastro Nacional dos Advogados">
+                    <i class="fa-solid fa-shield-halved"></i> Validar CNA OAB <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem;"></i>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-actions">
+            <!-- Usuário NÃO logado -->
+            <div th:if="${usuarioLogado == null}" style="display: flex; gap: 0.5rem; align-items: center;">
+                <a th:href="@{/login}" class="btn btn-outline btn-sm">
+                    <i class="fa-solid fa-right-to-bracket"></i> Entrar
+                </a>
+                <a th:href="@{/cadastro}" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-user-plus"></i> Cadastre-se
+                </a>
+            </div>
+
+            <!-- Usuário LOGADO -->
+            <div th:if="${usuarioLogado != null}" style="display: flex; gap: 0.85rem; align-items: center;">
+                <a th:if="${usuarioLogado.isCliente()}" th:href="@{/cliente/dashboard}" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 0.4rem;">
+                    <img th:if="${usuarioLogado.fotoPerfilUrl != null}" th:src="${usuarioLogado.fotoPerfilUrl}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" alt="Avatar">
+                    <i th:unless="${usuarioLogado.fotoPerfilUrl != null}" class="fa-solid fa-user"></i>
+                    <span th:text="${usuarioLogado.nome}">Usuário</span>
+                </a>
+
+                <a th:if="${usuarioLogado.isAdvogado()}" th:href="@{/advogado/dashboard}" class="btn btn-primary btn-sm" style="display: flex; align-items: center; gap: 0.4rem;">
+                    <img th:if="${usuarioLogado.fotoPerfilUrl != null}" th:src="${usuarioLogado.fotoPerfilUrl}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" alt="Avatar">
+                    <i th:unless="${usuarioLogado.fotoPerfilUrl != null}" class="fa-solid fa-gavel"></i>
+                    <span th:text="'Dr(a). ' + ${usuarioLogado.nome}">Advogado</span>
+                </a>
+
+                <a th:href="@{/logout}" class="btn btn-outline btn-sm" title="Sair da conta" style="color: var(--danger); border-color: #fee2e2;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Alertas de Sucesso / Erro -->
+<div th:fragment="alerts" class="container" style="margin-top: 1.5rem;" th:if="${mensagemSucesso != null or mensagemErro != null or mensagemInfo != null}">
+    <div th:if="${mensagemSucesso != null}" class="alert alert-success">
+        <span><i class="fa-solid fa-circle-check"></i> <strong th:text="${mensagemSucesso}">Sucesso!</strong></span>
+    </div>
+    <div th:if="${mensagemErro != null}" class="alert alert-danger">
+        <span><i class="fa-solid fa-circle-exclamation"></i> <strong th:text="${mensagemErro}">Erro!</strong></span>
+    </div>
+    <div th:if="${mensagemInfo != null}" class="alert alert-info">
+        <span><i class="fa-solid fa-circle-info"></i> <strong th:text="${mensagemInfo}">Aviso!</strong></span>
+    </div>
+</div>
+
+<!-- Floating Chat Trigger Widget (RF008) -->
+<a th:fragment="floatingChat" th:href="@{/advogados}" class="floating-chat-trigger" title="Falar com um advogado agora">
+    <i class="fa-solid fa-comments" style="font-size: 1.4rem;"></i>
+</a>
+
+<!-- Footer Comum -->
+<footer th:fragment="footer" class="footer">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2.5rem;">
+            <div>
+                <div class="brand-logo" style="color: #ffffff; margin-bottom: 0.75rem;">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <span>Attorney<span style="color: var(--accent);">App</span></span>
+                </div>
+                <p style="color: #94a3b8; font-size: 0.9rem;">
+                    Conectando clientes aos melhores advogados e democratizando o entendimento do Direito com tecnologia e transparência.
+                </p>
+                <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
+                    <a href="https://cna.oab.org.br/" target="_blank" class="badge badge-cna">
+                        <i class="fa-solid fa-shield-halved"></i> Consulta CNA OAB
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h4>Navegação</h4>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.9rem;">
+                    <li><a th:href="@{/}">Início</a></li>
+                    <li><a th:href="@{/advogados}">Buscar Advogados Especialistas</a></li>
+                    <li><a th:href="@{/glossario}">Glossário Jurídico Descomplicado</a></li>
+                    <li><a th:href="@{/login}">Área do Cliente e Advogado</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>Segurança & Conformidade</h4>
+                <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.75rem;">
+                    Inscrições profissionais verificadas diretamente com os registros oficiais da OAB.
+                </p>
+                <p style="color: #64748b; font-size: 0.8rem;">
+                    Attorney App LTDA &bull; CNPJ 00.000.000/0001-99
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>&copy; 2026 Attorney App. Todos os direitos reservados.</div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="#termos">Termos de Uso</a>
+                <a href="#privacidade">Privacidade</a>
+                <a href="https://cna.oab.org.br/" target="_blank">Portal OAB/CNA</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
