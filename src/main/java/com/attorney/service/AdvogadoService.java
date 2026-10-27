@@ -14,6 +14,10 @@ import java.util.Optional;
 @Service
 public class AdvogadoService {
 
+    private static final int NOTA_MINIMA = 0;
+    private static final int NOTA_MAXIMA = 10;
+    private static final int TAMANHO_MAXIMO_COMENTARIO = 2000;
+
     private final AdvogadoRepository advogadoRepository;
     private final AvaliacaoRepository avaliacaoRepository;
 
@@ -58,6 +62,8 @@ public class AdvogadoService {
 
     @Transactional
     public Avaliacao registrarAvaliacao(Long advogadoId, Cliente cliente, Integer nota, String comentario) {
+        validarAvaliacao(cliente, nota, comentario);
+
         Advogado advogado = advogadoRepository.findById(advogadoId)
                 .orElseThrow(() -> new IllegalArgumentException("Advogado não encontrado."));
 
@@ -73,6 +79,24 @@ public class AdvogadoService {
         advogadoRepository.save(advogado);
 
         return salva;
+    }
+
+    private void validarAvaliacao(Cliente cliente, Integer nota, String comentario) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("O cliente é obrigatório para registrar uma avaliação.");
+        }
+        if (nota == null) {
+            throw new IllegalArgumentException("A nota é obrigatória.");
+        }
+        if (nota < NOTA_MINIMA || nota > NOTA_MAXIMA) {
+            throw new IllegalArgumentException("A nota deve estar entre 0 e 10.");
+        }
+        if (comentario == null || comentario.trim().isEmpty()) {
+            throw new IllegalArgumentException("O comentário é obrigatório.");
+        }
+        if (comentario.length() > TAMANHO_MAXIMO_COMENTARIO) {
+            throw new IllegalArgumentException("O comentário deve ter no máximo 2000 caracteres.");
+        }
     }
 
     public List<Avaliacao> listarAvaliacoes(Long advogadoId) {
